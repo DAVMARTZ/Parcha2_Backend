@@ -1,0 +1,57 @@
+# ============================================================
+# PRUEBA SIMPLE: Firebase Authentication + Django REST Framework
+# Extensión de VS Code: REST Client
+#
+# INSTRUCCIONES:
+# 1. Copie la Web API Key desde Firebase:
+#    Firebase Console > Configuración del proyecto > General
+#    > Sus apps > seleccione la aplicación web
+#    > Configuración del SDK > copie el valor de apiKey.
+#
+# 2. Pegue la clave en FIREBASE_API_KEY.
+# 3. Escriba el correo y la contraseña de un usuario registrado
+#    en Firebase Authentication.
+# 4. Presione "Send Request" primero en INICIAR SESIÓN.
+# 5. Después presione "Send Request" en CONSULTAR MATERIALES.
+#
+
+
+# ============================================================
+
+@FIREBASE_API_KEY = AIzaSyAvrtadjsZgY8sJd-wulMxvL8zcKr2fbbg
+@EMAIL = pruebanueva@prueba.com
+@PASSWORD = 123456789
+@BACKEND_URL = http://127.0.0.1:8000
+
+
+### 1. INICIAR SESIÓN EN FIREBASE
+# @name firebaseLogin
+POST https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={{FIREBASE_API_KEY}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "{{EMAIL}}",
+  "password": "{{PASSWORD}}",
+  "returnSecureToken": true
+}
+
+
+
+### 2. CREAR EMPRESA PARA EL USUARIO AUTENTICADO
+POST {{BACKEND_URL}}/api/companies/
+Authorization: Bearer {{firebaseLogin.response.body.$.idToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Empresa Prueba Firebase",
+  "nit": "900123456-7",
+  "city": "Bogotá",
+  "sector": "Reciclaje"
+}
+
+### 2. CONSULTAR companies CON EL TOKEN OBTENIDO
+GET {{BACKEND_URL}}/api/companies/
+Authorization: Bearer {{firebaseLogin.response.body.$.idToken}}
+Accept: application/json

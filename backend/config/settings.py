@@ -27,7 +27,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "corsheaders",
+    "drf_spectacular",
     "companies",
+    "users",
 ]
 
 # Define la cadena de middlewares que procesa cada solicitud HTTP.
@@ -80,6 +82,31 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+# Configuración de drf-spectacular (Swagger / OpenAPI).
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Eco-Red API",
+    "DESCRIPTION": (
+        "Microservicio de autenticación y gestión de empresas y publicaciones "
+        "de materiales reciclables. Autenticación mediante tokens de Firebase."
+    ),
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SECURITY": [{"BearerAuth": []}],
+    "SECURITY_SCHEMES": {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+            "description": (
+                "ID token de Firebase. Se obtiene iniciando sesión en "
+                "Firebase (Authentication). Pegarlo en el botón Authorize."
+            ),
+        }
+    },
 }
 
 # Configuración general de idioma y zona horaria.

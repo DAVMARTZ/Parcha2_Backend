@@ -1,9 +1,18 @@
-backend/venv/
-backend/.env
-backend/firebase-service-account.json
-frontend/.env
+# Secretos y configuración local — NO versionar
+.env
+.env.*
+!.env.example
+firebase-service-account.json
+
+# Entorno virtual de Python
+venv/
+.venv/
+
+# Python compilado
 __pycache__/
 *.pyc
+
+# Dependencias y artefactos de frontend
 node_modules/
 dist/
 build/

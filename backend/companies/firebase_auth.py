@@ -4,6 +4,7 @@ import firebase_admin  # SDK administrativo de Firebase para Python.
 from firebase_admin import credentials, auth  # credentials carga la credencial; auth valida tokens.
 from rest_framework.authentication import BaseAuthentication  # Clase base para autenticación personalizada en DRF.
 from rest_framework import exceptions  # Excepciones estándar de autenticación de DRF.
+from drf_spectacular.extensions import OpenApiAuthenticationExtension  # Registra el esquema de seguridad en Swagger.
 from dotenv import load_dotenv  # Carga variables desde el archivo .env.
 from pathlib import Path  # Manejo robusto de rutas del sistema de archivos.
 
@@ -43,6 +44,11 @@ class FirebaseUser:
 
 class FirebaseAuthentication(BaseAuthentication):
     # Implementa autenticación personalizada para validar tokens Bearer emitidos por Firebase.
+    def authenticate_header(self, request):
+        # Permite a DRF responder 401 (con WWW-Authenticate) en lugar de 403
+        # cuando el token es inválido o está ausente.
+        return "Bearer"
+
     def authenticate(self, request):
         # Obtiene la cabecera Authorization enviada por el frontend.
         auth_header = request.headers.get("Authorization")
@@ -92,3 +98,16 @@ class FirebaseAuthentication(BaseAuthentication):
 
             # Responde a DRF con error de autenticación.
             raise exceptions.AuthenticationFailed("Token inválido")
+
+
+class FirebaseOpenApiAuthenticationExtension(OpenApiAuthenticationExtension):
+    # Registra FirebaseAuthentication como esquema Bearer en la documentación OpenAPI.
+    target_class = "companies.firebase_auth.FirebaseAuthentication"
+    name = "BearerAuth"
+
+    def get_security_definition(self, auto_schema):
+        return {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+        }

@@ -26,3 +26,6 @@ companies_collection = db["companies"]
 
 # Expone la colección de publicaciones de materiales.
 material_listings_collection = db["material_listings"]
+
+# Expone la colección de perfiles de usuarios (uid + rol).
+users_collection = db["users"]
